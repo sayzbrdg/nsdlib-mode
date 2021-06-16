@@ -1,0 +1,81 @@
+= nsd.lib mode
+
+generic-modeを利用して作成した http://shaw.la.coocan.jp/nsdl/[nsd.lib]
+用のちっちゃなメジャーモードです。
+
+== できる事
+* エンベロープ定義やリピート命令、共通コマンド等に色が付いて見易くなります。
+* MML保存からコンパイル、曲の再生までを1コマンドで実行します。
+
+== 使い方
+nsdlib-modeを使用する為には https://www.gnu.org/software/emacs/[emacs] が必要です。
+
+=== インストール方法
+
+今のところインストーラーは用意していません。emacs の load-pathに
+設定されているパスのどれかに nsdlib-mode.el をコピーして下さい。
+
+そして emacs のコンフィグ に `(autoload 'nsdlib-mode "nsdlib-mode" nil t)` と
+`(add-to-list 'auto-mode-alist '("\\.nsd$" . nsdlib-mode))` を追記します。
+
+=== キーバインド
+
+nsdlib-mode用に2つのキーバインドが設定されています。
+
+* C-c C-c
+現在のバッファを保存して、MMLコンパイラを呼び出します。コンパイル後に
+自動再生する設定になっている場合は、コンパイルが正常終了していれば
+再生します。
+* C-c C-p
+コンパイル後のファイルを再生します。バッファを保存したり、MMLコンパイラ
+を呼び出したりはしません。ファイルの存在も確認しないため、もしファイルが
+無い場合は再生プログラム側でエラーになるでしょう。
+
+== カスタマイズ変数
+
+以下のカスタマイズ変数を用意しています。
+
+=== nsdlib-mode-hook
+nsdlib-mode起動時に実行されるフック変数です。
+
+=== nsdlib-after-compile-hook
+MMLコンパイルが正常終了したときに実行されるフック変数です。
+
+=== nsdlib-compile-program-name
+MMLのコンパイルに使用するプログラム名です。オプションは次のカスタマイズ
+変数で設定します。
+
+=== nsdlib-compile-program-options
+nsdlib-compile-program-name で指定したプログラムに渡すオプションを文字列の
+リストで設定します。
+
+=== nsdlib-player-program-name
+コンパイルしたファイルを再生するプログラム名です。オプションは次の
+カスタマイズ変数で設定します。コンパイル後に自動で再生したくない場合は
+後述の nsdlib-play-after-compile をnilに設定します。
+
+=== nsdlib-player-program-options
+nsdlib-player-program-name で指定したプログラムに渡すオプションを文字列の
+リストで設定します。
+
+=== nsdlib-play-after-compile
+nil以外を指定すると、MMLコンパイル後に自動で nsdlib-player-program-name に
+設定したプログラムを呼び出して再生します。
+
+=== nsdlib-normalize-filename-function
+nsdlib-compile-program-name や nsdlib-player-program-name で指定したプログラムにファイル名を渡す前に
+ここで指定した関数でファイル名を整形します。
+WSL上で動作するemacsを使用するとき等に設定します。
+デフォルト値は `convert-standard-filename` です。
+
+== 設定サンプル
+
+----
+(autoload 'nsdlib-mode "nsdlib-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.nsd$" . nsdlib-mode))
+(setq nsdlib-compile-program-name "nsc.exe")
+(setq nsdlib-compile-program-options '("-N" "-E"))
+(setq nsdlib-player-program-name "virtuansf")
+(setq nsdlib-player-program-options nil)
+(setq nsdlib-play-after-compile t)
+----
